@@ -23,7 +23,7 @@ namespace Lab3
         }
         public partial void Shoot(Map map, Tank tank);
 
-        public partial void Movement(Map map, char k);
+        public partial void Movement(Map map, Tank tank, char k);
 
         public virtual void OwnMovement() { }
     }
@@ -120,7 +120,7 @@ namespace Lab3
         public override partial void Change(Tank tank);
     }
     [Serializable]
-    public partial class Grass : Environment // трава (не меняется)
+    public  class Grass : Environment // трава (не меняется)
     {
 
         public Grass() : base(true, 0, 0, false)
@@ -138,7 +138,7 @@ namespace Lab3
         public override partial void Change(Tank tank);
     }
     [Serializable]
-    public partial class Lava : Environment // лава (не меняется)
+    public class Lava : Environment // лава (не меняется)
     {
         public Lava() : base(true, 0, 15, true)
         {

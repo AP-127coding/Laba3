@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO.Compression;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Json;
-using System.Xml.Serialization;
+using System.Threading.Tasks;
+
 namespace Lab3
 
 
@@ -14,7 +17,7 @@ namespace Lab3
         public int HP { get { return hp; } }
         public bool Vision { get { return vision; } }
         public int Direction { get { return direction; } }
-        public partial void Shoot(Map map, Tank tank)
+        public partial void Shoot(Map map, Tank tank) // стрельба танка
         {
             int xtemp = x;
             int ytemp = y;
@@ -52,7 +55,7 @@ namespace Lab3
                             if (map.GetEnvironments(xtemp, ytemp + 1).EnvHP > 0)
                             {
                                 map.GetEnvironments(xtemp, ytemp + 1).Change(this);
-                                if (map.GetEnvironments(xtemp, ytemp - 1).EnvHP == 0)
+                                if (map.GetEnvironments(xtemp, ytemp + 1).EnvHP == 0)
                                 {
                                     map.environments[xtemp, ytemp + 1] = map.GetEnvironments(1, 1);
                                 }
@@ -72,7 +75,7 @@ namespace Lab3
                             if (map.GetEnvironments(xtemp - 1, ytemp).EnvHP > 0)
                             {
                                 map.GetEnvironments(xtemp - 1, ytemp).Change(this);
-                                if (map.GetEnvironments(xtemp, ytemp - 1).EnvHP == 0)
+                                if (map.GetEnvironments(xtemp-1, ytemp).EnvHP == 0)
                                 {
                                     map.environments[xtemp - 1, ytemp] = map.GetEnvironments(1, 1);
                                 }
@@ -92,7 +95,7 @@ namespace Lab3
                             if (map.GetEnvironments(xtemp + 1, ytemp).EnvHP > 0)
                             {
                                 map.GetEnvironments(xtemp + 1, ytemp).Change(this);
-                                if (map.GetEnvironments(xtemp, ytemp - 1).EnvHP == 0)
+                                if (map.GetEnvironments(xtemp + 1, ytemp).EnvHP == 0)
                                 {
                                     map.environments[xtemp + 1, ytemp] = map.GetEnvironments(1, 1);
                                 }
@@ -103,7 +106,7 @@ namespace Lab3
             }
 
         }
-        public partial void Movement(Map map, char k)
+        public partial void Movement(Map map,Tank tank, char k) // движение танка 
         {
 
             switch (k)
@@ -112,7 +115,7 @@ namespace Lab3
                 case 'w':
                     {
                         direction = 3;
-                        if (map.GetEnvironments(x - 1, y).EnvHP == 0)
+                        if (map.GetEnvironments(x - 1, y).EnvHP == 0 && (x - 1 != tank.x || y != tank.y))
                         {
                             OwnMovement();
                             x--;
@@ -130,7 +133,7 @@ namespace Lab3
                 case 's':
                     {
                         direction = 4;
-                        if (map.GetEnvironments(x + 1, y).EnvHP == 0)
+                        if (map.GetEnvironments(x + 1, y).EnvHP == 0 && (x + 1 != tank.x || y != tank.y))
                         {
                             OwnMovement();
                             x++;
@@ -147,7 +150,7 @@ namespace Lab3
                 case 'd':
                     {
                         direction = 2;
-                        if (map.GetEnvironments(x, y + 1).EnvHP == 0)
+                        if (map.GetEnvironments(x, y + 1).EnvHP == 0 && (x != tank.x || y + 1 != tank.y))
                         {
                             OwnMovement();
                             y++;
@@ -164,7 +167,7 @@ namespace Lab3
                 case 'a':
                     {
                         direction = 1;
-                        if (map.GetEnvironments(x, y - 1).EnvHP == 0)
+                        if (map.GetEnvironments(x, y - 1).EnvHP == 0 && (x != tank.x || y - 1 != tank.y))
                         {
                             OwnMovement();
                             y--;
@@ -237,13 +240,7 @@ namespace Lab3
             else envhp -= tank.Power;
         }
     }
-    public partial class Grass
-    {
-
-    }
-    public partial class Lava
-    {
-    }
+    
     public partial class Map
     {
         public partial Environment GetEnvironments(int x, int y)
@@ -255,41 +252,36 @@ namespace Lab3
 
     class Program
     {
-        static Map MapSerialisation(Map map, bool flag)
+        static Map MapSerialisation(Map map,int x,int y,int x2,int y2, bool flag)
         {
-
-            Environment[] environments2 = new Environment[144];
-            FileStream mapfile = File.Create("map.xml");
-
-            int ind = 0;
-            for (int i = 0; i < 12; i++)
-            {
-                for (int j = 0; j < 12; j++)
-                {
-                    environments2[ind] = map.environments[i, j];
-                    ind++;
-                }
-            }
-            XmlSerializer mapdata = new XmlSerializer(typeof(Environment[]));
-            mapdata.Serialize(mapfile, map.environments);
-
-            mapfile.Close();
             if (flag == true)
             {
-                mapfile = File.OpenRead("map.xml");
-                Environment[] environmentstemp = new Environment[144];
-                environmentstemp = mapdata.Deserialize(mapfile) as Environment[];
+                FileStream readcell1file = File.OpenRead("celltank1.json");
+                DataContractJsonSerializer celldata = new DataContractJsonSerializer(map.environments[x,y].GetType());
+                map.environments[x,y] = celldata.ReadObject(readcell1file) as Environment;
 
-                for (int i = 0; i < 12; i++)
-                {
-                    for (int j = 0; j < 12; j++)
-                    {
-                        map.environments[i, j] = environmentstemp[ind];
-                        ind++;
-                    }
-                }
+                FileStream readcell2file = File.OpenRead("celltank1.json");
+                DataContractJsonSerializer celldata2 = new DataContractJsonSerializer(map.environments[x2, y2].GetType());
+                map.environments[x, y] = celldata2.ReadObject(readcell2file) as Environment;
 
+                readcell1file.Close();
+                readcell2file.Close();
+                return map;
             }
+
+            FileStream celltankfile = File.Create("celltank1.json");
+            FileStream celltank2file = File.Create("celltank2.json");
+
+
+            DataContractJsonSerializer celltankdata = new DataContractJsonSerializer(map.environments[x,y].GetType());
+            celltankdata.WriteObject(celltankfile, map.environments[x,y]);
+
+            DataContractJsonSerializer celltank2data = new DataContractJsonSerializer(map.environments[x2, y2].GetType());
+            celltank2data.WriteObject(celltank2file, map.environments[x2, y2]);
+
+            celltank2file.Close();
+            celltankfile.Close();
+            
             return map;
         }
         static Tank TankSerialisation(Tank tank, bool flag)
@@ -299,6 +291,7 @@ namespace Lab3
                 FileStream tankdfile = File.OpenRead("tank.json");
                 DataContractJsonSerializer tankddata = new DataContractJsonSerializer(tank.GetType());
                 Tank tankd1 = tankddata.ReadObject(tankdfile) as Tank;
+                tankdfile.Close();
                 return tankd1;
             }
             FileStream tankfile = File.Create("tank.json");
@@ -315,6 +308,7 @@ namespace Lab3
                 FileStream tankd2file = File.OpenRead("tank2.json");
                 DataContractJsonSerializer tank2ddata = new DataContractJsonSerializer(tank2.GetType());
                 Tank tankd2 = tank2ddata.ReadObject(tankd2file) as Tank;
+                tankd2file.Close();
                 return tankd2;
             }
             FileStream tank2file = File.Create("tank2.json");
@@ -324,58 +318,85 @@ namespace Lab3
 
             return tank2;
         }
-
-        static void Main()
+        static Tank ChooseTank1(Tank tank)
+        {
+            Console.WriteLine("\nВыберите танк:\n");
+            Console.WriteLine("Игрок 1:\n1 - Обычный танк\n2 - Быстрый танк\n3 - Мощный танк");
+            int player1 = int.Parse(Console.ReadLine());
+            switch (player1)
+            {
+                case 1: break;
+                case 2: tank = new SpeedTank(1, 1, 2); break;
+                case 3: tank = new PowerfulTank(1, 1, 2); break;
+            }
+            return tank;
+        }
+            static Tank ChooseTank2(Tank tank2)
+            {
+                Console.WriteLine("Игрок 2:\n1 - Обычный танк\n2 - Быстрый танк\n3 - Мощный танк");
+                int player2 = int.Parse(Console.ReadLine());
+                switch (player2)
+                {
+                    case 1: break;
+                    case 2: tank2 = new SpeedTank(10, 10, 3); break;
+                    case 3: tank2 = new PowerfulTank(10, 10, 3); break;
+                }
+                return tank2;
+            }
+        static void Actions()
         {
             Map map = new Map();
-            Tank tank = new SpeedTank(1, 1, 2);
-            Tank tank2 = new BaseTank(1, 7, 1);
+            Tank tank = new BaseTank(1, 1, 2);
+            Tank tank2 = new BaseTank(10, 10, 3);
+            Console.WriteLine("Управление\nИгрок 1: w - вверх, s - вниз, d - вправо, a - влево, x - выстрел\nИгрок 2: i - вверх, k - вниз, j - влево, l - вправо, m - выстрел");
+            tank = ChooseTank1(tank);
+            tank2 = ChooseTank2(tank2);
+            Console.WriteLine("Для выхода с сохранением нажмите q");
+            Console.WriteLine("Чтобы продолжить нажмите z\n");
+            Console.WriteLine("Игра началась");
+            
 
 
             while (tank.HP > 0 && tank2.HP > 0)
             {
+
                 char k = Convert.ToChar(Console.ReadLine());
                 switch (k)
                 {
-                    case 'p':
-                        {
-                            for (int i = 0; i < 12; i++)
-                            {
-                                for (int j = 0; j < 12; j++)
-                                {
-                                    Console.WriteLine($"{map.environments[i, j].GetType().Name}");
-                                }
-                            }
-                        }
-                        break;
-                    case 'i': tank2.Movement(map, k); break;
-                    case 'w': tank.Movement(map, k); break;
-                    case 'k': tank2.Movement(map, k); break;
-                    case 's': tank.Movement(map, k); break;
-                    case 'l': tank2.Movement(map, k); break;
-                    case 'd': tank.Movement(map, k); break;
-                    case 'j': tank2.Movement(map, k); break;
-                    case 'a': tank.Movement(map, k); break;
+                    case 'i': tank2.Movement(map, tank, k); break;
+                    case 'w': tank.Movement(map, tank2, k); break;
+                    case 'k': tank2.Movement(map, tank, k); break;
+                    case 's': tank.Movement(map, tank2, k); break;
+                    case 'l': tank2.Movement(map, tank, k); break;
+                    case 'd': tank.Movement(map, tank2, k); break;
+                    case 'j': tank2.Movement(map, tank, k); break;
+                    case 'a': tank.Movement(map, tank2, k); break;
                     case 'x': tank.Shoot(map, tank2); break;
                     case 'm': tank2.Shoot(map, tank); break;
                     case 'q':
                         {
-                            // map = MapSerialisation(map, false);
+                            
+                            map = MapSerialisation(map,tank.X,tank.Y,tank2.X,tank2.Y, false);
                             tank = TankSerialisation(tank, false);
                             tank2 = Tank2Serialisation(tank2, false);
-                        }; break;
+                            Process.GetCurrentProcess().Kill();
+                        }; 
+                        break;
                     case 'z':
                         {
-                            //map = MapSerialisation(map, true);
                             tank = TankSerialisation(tank, true);
                             tank2 = Tank2Serialisation(tank2, true);
+                            map = MapSerialisation(map, tank.X,tank.Y,tank2.X,tank2.Y, true);
                         }
                         break;
                 }
 
             }
             Console.WriteLine("GAME OVER!");
-
+        }
+        static void Main()
+        {
+            Actions();
         }
     }
 }

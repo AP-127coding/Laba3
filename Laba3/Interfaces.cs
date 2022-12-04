@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Lab3
 {
-    interface IShoot
+    interface IShoot //стрельба танков
     {
         void Shoot(Map map, Tank tank);
 
@@ -12,7 +12,7 @@ namespace Lab3
     }
     interface IMovement
     {
-        void Movement(Map map, char k);
+        void Movement(Map map, Tank tank, char k); // движение танков
     }
 
 }
