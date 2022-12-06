@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Diagnostics;
 using System.IO.Compression;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 
 namespace Lab3
-
-
 {
     public abstract partial class Tank
     {
@@ -25,19 +25,24 @@ namespace Lab3
             {
                 case 1:
                     {
-                        while (map.GetEnvironments(xtemp, ytemp - 1).BulletPassability == true && (tank.x != xtemp || tank.y != ytemp - 1))
+                        while (map.GetEnvironments(xtemp, ytemp - 1).BulletPassability == true && (tank.x != xtemp || tank.y != ytemp - 1)) // пока клетка пропускает пулю и в клетке не стоит танк
                         {
-                            ytemp--;
+                            ytemp--; // переход на следующую клетку
                         }
-                        if (tank.x == xtemp && tank.y == ytemp - 1) tank.hp -= power;
+                        if (tank.x == xtemp && tank.y == ytemp - 1) // если в клетке стоит танк
+                        {
+                            tank.hp -= power;
+                            Console.WriteLine("Есть пробитие! ");
+                        }
                         else
                         {
-                            if (map.GetEnvironments(xtemp, ytemp - 1).EnvHP > 0)
+                            if (map.GetEnvironments(xtemp, ytemp - 1).EnvHP > 0) // если клетка иммет здороье 
                             {
-                                map.GetEnvironments(xtemp, ytemp - 1).Change(this);
+                                map.GetEnvironments(xtemp, ytemp - 1).Change(this); // вызов функции change у клетки
                                 if (map.GetEnvironments(xtemp, ytemp - 1).EnvHP == 0)
                                 {
-                                    map.environments[xtemp, ytemp - 1] = map.GetEnvironments(1, 1);
+                                    map.environments[xtemp, ytemp - 1] = map.GetEnvironments(1, 1); // делает клетку дефолтной
+                                    Console.WriteLine("Клетка стала дефолтной ");
                                 }
                             }
                         }
@@ -49,7 +54,11 @@ namespace Lab3
                         {
                             ytemp++;
                         }
-                        if (tank.x == xtemp && tank.y == ytemp + 1) tank.hp -= power;
+                        if (tank.x == xtemp && tank.y == ytemp + 1)
+                        {
+                            tank.hp -= power;
+                            Console.WriteLine("Есть пробитие! ");
+                        }
                         else
                         {
                             if (map.GetEnvironments(xtemp, ytemp + 1).EnvHP > 0)
@@ -58,6 +67,7 @@ namespace Lab3
                                 if (map.GetEnvironments(xtemp, ytemp + 1).EnvHP == 0)
                                 {
                                     map.environments[xtemp, ytemp + 1] = map.GetEnvironments(1, 1);
+                                    Console.WriteLine("Клетка стала дефолтной! ");
                                 }
                             }
                         }
@@ -69,7 +79,11 @@ namespace Lab3
                         {
                             xtemp--;
                         }
-                        if (tank.x == xtemp - 1 && tank.y == ytemp) tank.hp -= power;
+                        if (tank.x == xtemp - 1 && tank.y == ytemp)
+                        {
+                            tank.hp -= power;
+                            Console.WriteLine("Есть пробитие! ");
+                        }
                         else
                         {
                             if (map.GetEnvironments(xtemp - 1, ytemp).EnvHP > 0)
@@ -78,6 +92,7 @@ namespace Lab3
                                 if (map.GetEnvironments(xtemp-1, ytemp).EnvHP == 0)
                                 {
                                     map.environments[xtemp - 1, ytemp] = map.GetEnvironments(1, 1);
+                                    Console.WriteLine("Клетка стала дефолтной! ");
                                 }
                             }
                         }
@@ -89,7 +104,11 @@ namespace Lab3
                         {
                             xtemp++;
                         }
-                        if (tank.x == xtemp + 1 && tank.y == ytemp) tank.hp -= power;
+                        if (tank.x == xtemp + 1 && tank.y == ytemp)
+                        {
+                            tank.hp -= power;
+                            Console.WriteLine("Есть пробитие! ");
+                        }
                         else
                         {
                             if (map.GetEnvironments(xtemp + 1, ytemp).EnvHP > 0)
@@ -98,6 +117,7 @@ namespace Lab3
                                 if (map.GetEnvironments(xtemp + 1, ytemp).EnvHP == 0)
                                 {
                                     map.environments[xtemp + 1, ytemp] = map.GetEnvironments(1, 1);
+                                    Console.WriteLine("Клетка стала дефолтной ");
                                 }
                             }
                         }
@@ -115,15 +135,22 @@ namespace Lab3
                 case 'w':
                     {
                         direction = 3;
-                        if (map.GetEnvironments(x - 1, y).EnvHP == 0 && (x - 1 != tank.x || y != tank.y))
+                        if (map.GetEnvironments(x - 1, y).EnvHP == 0 && (x - 1 != tank.x || y != tank.y)) // если клетка проходимая и там не стоит танк
                         {
-                            OwnMovement();
+                            OwnMovement(); // вызов виртуальной функции
                             x--;
-                            hp -= map.GetEnvironments(x, y).Damage;
-                            if (map.GetEnvironments(x, y).EnvVision == false)
+                            hp -= map.GetEnvironments(x, y).Damage; // танк получает урон от клетки 
+                            Console.WriteLine($"Танк переместился на клетку({x},{y})");
+                            if (map.GetEnvironments(x, y).EnvVision == false) // если клетка скрывает танк
                             {
-                                vision = false;
+                                vision = false; // танк становится невидемым
+                                Console.WriteLine("Танк невидимый! ");
                             }
+                            else { vision = true; } // в любой другой клетке видимость танка есть
+                        }
+                        else
+                        {
+                            Console.WriteLine("Танк не сдвинулся! В этом направлении препятствие или танк.");
                         }
 
                     }
@@ -138,10 +165,17 @@ namespace Lab3
                             OwnMovement();
                             x++;
                             hp -= map.GetEnvironments(x, y).Damage;
+                            Console.WriteLine($"Танк переместился на клетку({x},{y})");
                             if (map.GetEnvironments(x, y).EnvVision == false)
                             {
                                 vision = false;
+                                Console.WriteLine("Танк невидимый! ");
                             }
+                            else { vision = true; }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Танк не сдвинулся! В этом направлении препятствие или танк.");
                         }
                     }
                     break;
@@ -155,10 +189,17 @@ namespace Lab3
                             OwnMovement();
                             y++;
                             hp -= map.GetEnvironments(x, y).Damage;
+                            Console.WriteLine($"Танк переместился на клетку({x},{y})");
                             if (map.GetEnvironments(x, y).EnvVision == false)
                             {
                                 vision = false;
+                                Console.WriteLine("Танк невидимый! ");
                             }
+                            else { vision = true; }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Танк не сдвинулся! В этом направлении препятствие или танк.");
                         }
                     }
                     break;
@@ -172,22 +213,27 @@ namespace Lab3
                             OwnMovement();
                             y--;
                             hp -= map.GetEnvironments(x, y).Damage;
+                            Console.WriteLine($"Танк переместился на клетку({x},{y})");
                             if (map.GetEnvironments(x, y).EnvVision == false)
                             {
                                 vision = false;
+                                Console.WriteLine("Танк невидимый! ");
                             }
+                            else { vision = true; }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Танк не сдвинулся! В этом направлении препятствие или танк.");
                         }
                     }
                     break;
-
             }
         }
-
     }
     public partial class BaseTank
     {
 
-        public override partial void OwnMovement()
+        public override partial void OwnMovement() // замедление танка 
         {
             Thread.Sleep(300);
         }
@@ -195,7 +241,7 @@ namespace Lab3
     partial class PowerfulTank
     {
 
-        public override partial void OwnMovement()
+        public override partial void OwnMovement() // замедление танка 
         {
             Thread.Sleep(500);
         }
@@ -203,53 +249,61 @@ namespace Lab3
     partial class SpeedTank
     {
 
-        public override partial void OwnMovement()
+        public override partial void OwnMovement() // замедление танка 
         {
             Thread.Sleep(100);
         }
     }
     abstract public partial class Environment
     {
-        public virtual partial void Change(Tank tank)
+        public virtual partial void Change(Tank tank) // виртуальная функция для изменения клетки
         {
             Console.WriteLine("Свойства клетки изменились");
         }
     }
     public partial class Beton
     {
-        public override partial void Change(Tank tank)
+        public override partial void Change(Tank tank) // виртуальная функция для изменения клетки
         {
             if (tank.Power > envhp)
             {
                 envhp = 0;
                 bulletPassability = true;
+                Console.WriteLine("Бетон разрушен! ");
             }
-            else envhp -= tank.Power;
+            else
+            {
+                envhp -= tank.Power;
+                Console.WriteLine("Бетон повреждён!");
+            }
 
         }
     }
     public partial class Glass
     {
-        public override partial void Change(Tank tank)
+        public override partial void Change(Tank tank) // виртуальная функция для изменения клетки
         {
             if (tank.Power > envhp)
             {
                 envhp = 0;
                 bulletPassability = true;
+                Console.WriteLine("Стекло разрушено! ");
             }
-            else envhp -= tank.Power;
+            else
+            {
+                envhp -= tank.Power;
+                Console.WriteLine("Стекло повреждено!");
+            }
         }
     }
     
     public partial class Map
     {
-        public partial Environment GetEnvironments(int x, int y)
+        public partial Environment GetEnvironments(int x, int y) // получение клетки по координатам
         {
             return environments[x, y];
         }
     }
-
-
     class Program
     {
         static Map MapSerialisation(Map map,int x,int y,int x2,int y2, bool flag)
@@ -318,50 +372,102 @@ namespace Lab3
 
             return tank2;
         }
-        static Tank ChooseTank1(Tank tank)
+        static Tank ChooseTank1(Tank tank) // выбор танка для 1 игрока
         {
-            Console.WriteLine("\nВыберите танк:\n");
-            Console.WriteLine("Игрок 1:\n1 - Обычный танк\n2 - Быстрый танк\n3 - Мощный танк");
-            int player1 = int.Parse(Console.ReadLine());
-            switch (player1)
+            string p1;
+            int player1 = 0;
+            while (true)
             {
-                case 1: break;
-                case 2: tank = new SpeedTank(1, 1, 2); break;
-                case 3: tank = new PowerfulTank(1, 1, 2); break;
-            }
-            return tank;
-        }
-            static Tank ChooseTank2(Tank tank2)
-            {
-                Console.WriteLine("Игрок 2:\n1 - Обычный танк\n2 - Быстрый танк\n3 - Мощный танк");
-                int player2 = int.Parse(Console.ReadLine());
-                switch (player2)
+                Console.WriteLine("Выберите танк:");
+                Console.WriteLine("Игрок 1:\n1 - Обычный танк\n2 - Быстрый танк\n3 - Мощный танк");
+                p1 = Console.ReadLine();
+                try
                 {
-                    case 1: break;
-                    case 2: tank2 = new SpeedTank(10, 10, 3); break;
-                    case 3: tank2 = new PowerfulTank(10, 10, 3); break;
+                    player1 = int.Parse(p1);
                 }
-                return tank2;
+                catch
+                {
+                    Console.WriteLine("Неправильный ввод.");
+                    continue;
+                }
+                if (player1 == 1 || player1 == 2 || player1 == 3)
+                {
+                    switch (player1)
+                    {
+                        case 1: break;
+                        case 2: tank = new SpeedTank(1, 1, 2); break;
+                        case 3: tank = new PowerfulTank(1, 1, 2); break;
+                    }
+                    return tank;
+                }
+                else { continue; }
             }
+
+        }
+        static Tank ChooseTank2(Tank tank2) // выбор танка для 2 игрока
+        {
+            string p2;
+            int player2 = 0;
+            while (true)
+            {
+                Console.WriteLine("Выберите танк:");
+                Console.WriteLine("Игрок 2:\n1 - Обычный танк\n2 - Быстрый танк\n3 - Мощный танк");
+                p2 = Console.ReadLine();
+                try
+                {
+                    player2 = int.Parse(p2);
+                }
+                catch
+                {
+                    Console.WriteLine("Неправильный ввод.");
+                    continue;
+                }
+                if (player2 == 1 || player2 == 2 || player2 == 3)
+                {
+                    switch (player2)
+                    {
+                        case 1: break;
+                        case 2: tank2 = new SpeedTank(10, 10, 3); break;
+                        case 3: tank2 = new PowerfulTank(10, 10, 3); break;
+                    }
+                    return tank2;
+                }
+                else { continue; }
+            }
+        }
         static void Actions()
         {
             Map map = new Map();
             Tank tank = new BaseTank(1, 1, 2);
             Tank tank2 = new BaseTank(10, 10, 3);
-            Console.WriteLine("Управление\nИгрок 1: w - вверх, s - вниз, d - вправо, a - влево, x - выстрел\nИгрок 2: i - вверх, k - вниз, j - влево, l - вправо, m - выстрел");
+
+            Console.WriteLine("Управление\nИгрок 1: w - вверх, s - вниз, d - вправо, a - влево, x - выстрел\nИгрок 2: i - вверх, k - вниз, j - влево, l - вправо, m - выстрел\n");
             tank = ChooseTank1(tank);
             tank2 = ChooseTank2(tank2);
             Console.WriteLine("Для выхода с сохранением нажмите q");
-            Console.WriteLine("Чтобы продолжить нажмите z\n");
+            Console.WriteLine("Чтобы продолжить игру с предыдущего сохранения - нажмите z\n");
             Console.WriteLine("Игра началась");
             
-
-
-            while (tank.HP > 0 && tank2.HP > 0)
+            while (tank.HP > 0 && tank2.HP > 0) // игра может продолжаться только тогда, когда у такнков есть здоровье
             {
-
-                char k = Convert.ToChar(Console.ReadLine());
-                switch (k)
+                string g;
+                char k;
+                try
+                {
+                    g = Console.ReadLine(); // считывание кнопок
+                    if (g.Length > 1)
+                    {
+                        Console.WriteLine("Таких кнопок нет в управлении.");
+                        continue;
+                    }
+                    k = Convert.ToChar(g);
+                }
+                catch
+                {
+                    Console.WriteLine("Ошибка при вводе");
+                    continue;
+                }
+                switch (k) // вызов функциий, соответствующих клавиш
                 {
                     case 'i': tank2.Movement(map, tank, k); break;
                     case 'w': tank.Movement(map, tank2, k); break;
@@ -373,7 +479,7 @@ namespace Lab3
                     case 'a': tank.Movement(map, tank2, k); break;
                     case 'x': tank.Shoot(map, tank2); break;
                     case 'm': tank2.Shoot(map, tank); break;
-                    case 'q':
+                    case 'q': // сериализация  
                         {
                             
                             map = MapSerialisation(map,tank.X,tank.Y,tank2.X,tank2.Y, false);
@@ -382,13 +488,15 @@ namespace Lab3
                             Process.GetCurrentProcess().Kill();
                         }; 
                         break;
-                    case 'z':
+                    case 'z': // десериализация 
                         {
                             tank = TankSerialisation(tank, true);
                             tank2 = Tank2Serialisation(tank2, true);
                             map = MapSerialisation(map, tank.X,tank.Y,tank2.X,tank2.Y, true);
+                            Console.WriteLine("Продолжение игры с предыдущего сохранения");
                         }
                         break;
+                    default: Console.WriteLine("Такой кнопок нет в управлении.");  break;
                 }
 
             }

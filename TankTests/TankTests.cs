@@ -1,3 +1,4 @@
+global using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Lab3;
 
 namespace TestClass
@@ -10,10 +11,8 @@ namespace TestClass
         {
             Map map = new Map();
             Tank tank = new BaseTank(1, 1, 4);
-
-            int expected = 40;
+            int expected = 40; // потому что у базового танка урон = 70, а здоровье бетона = 110 
             tank.Shoot(map, tank);
-
             int actual = map.environments[3, 1].EnvHP;
 
             Assert.AreEqual(expected, actual);
@@ -23,15 +22,10 @@ namespace TestClass
         public void Shoot_2Tanks()
         {
             Map map = new Map();
-
             Tank tank1 = new SpeedTank(1, 1, 2);
-
             Tank tank2 = new BaseTank(1, 8, 1);
-
-            int expected = 30;
-
+            int expected = 30; // потому что у быстрого танка здоровье = 100, а у базового танка урон = 70
             tank2.Shoot(map, tank1);
-
             int actual = tank1.HP;
 
             Assert.AreEqual(expected, actual);
@@ -40,7 +34,6 @@ namespace TestClass
         public void Movement_Tank()
         {
             Map map = new Map();
-
             Tank tank = new BaseTank(1, 1, 2);
             Tank tank2 = new SpeedTank(2, 7, 2);
             char move = 'd';
@@ -62,14 +55,10 @@ namespace TestClass
             Map map = new Map();
             Tank tank = new BaseTank(2, 6, 2);
             Tank tank2 = new SpeedTank(2, 7, 2);
-
             char move = 'd';
-
             int xExpected = 2;
             int yExpected = 6;
-
             tank.Movement(map, tank2, move);
-
             int xActual = tank.X;
             int yActual = tank.Y;
 
@@ -80,16 +69,12 @@ namespace TestClass
         public void NoneMovement_Tank()
         {
             Map map = new Map();
-
             Tank tank = new BaseTank(1, 1, 3);
             Tank tank2 = new SpeedTank(2, 7, 2);
             char move = 'w';
-
             int xExpected = 1;
             int yExpected = 1;
-
             tank.Movement(map,tank2, move);
-
             int yActual = tank.Y;
             int xActual = tank.X;
 
@@ -102,19 +87,17 @@ namespace TestClass
         public void MovementLavaDamage_Tank()
         {
             Map map = new Map();
-
             Tank tank = new BaseTank(10, 3, 3);
             Tank tank2 = new SpeedTank(2, 7, 2);
             char move = 'a';
-
             int xExpected = 10;
             int yExpected = 2;
             int hpExpected = 105;
             tank.Movement(map,tank2, move);
-
             int yActual = tank.Y;
             int xActual = tank.X;
             int hpActual = tank.HP;
+
             Assert.AreEqual(xExpected, xActual);
             Assert.AreEqual(yExpected, yActual);
             Assert.AreEqual(hpExpected, hpActual);
@@ -125,13 +108,9 @@ namespace TestClass
             Tank tank = new SpeedTank(1, 3, 2);
             Tank tank2 = new SpeedTank(2, 7, 2);
             Map map = new Map();
-
             char move = 'd';
-
             bool tankVisionExpected = false;
-
             tank.Movement(map,tank2, move);
-
             bool tankVisionActual = tank.Vision;
 
             Assert.AreEqual(tankVisionExpected, tankVisionActual);

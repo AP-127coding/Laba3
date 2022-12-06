@@ -86,6 +86,9 @@ namespace Lab3
 
         public virtual partial void Change(Tank tank);
     }
+    /* здоровье = -1 показывает, что клетку нельзя пройти и сломать, 
+         * 0 - это значит, что клетку танк может пройти,
+         * а положительное значение показывает, что пройти её нельзя, но можно разрушить*/
     [Serializable]
     public partial class Default : Environment // обычная клетка (не меняется)
     {
@@ -148,7 +151,6 @@ namespace Lab3
     [Serializable]
     public partial class Map
     {
-
         static Brick brick = new Brick();
         static Default defaults = new Default();
         static Water water = new Water();
@@ -159,7 +161,6 @@ namespace Lab3
         b32 = new Beton(), b47 = new Beton(), b46 = new Beton(), b45 = new Beton(), b44 = new Beton(), b43 = new Beton(), b78 = new Beton(), b77 = new Beton(), b76 = new Beton(),
         b75 = new Beton(), b74 = new Beton(), b73 = new Beton(), b87 = new Beton(), b86 = new Beton(), b85 = new Beton(), b83 = new Beton(), b97 = new Beton(), b93 = new Beton(),
         b92 = new Beton(), b107 = new Beton(), b106 = new Beton(), b105 = new Beton(), b104 = new Beton(), b103 = new Beton();
-
         public Grass EnvGrass { get { return grass; } }
         public Environment[,] environments = {
         {brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick},
@@ -175,7 +176,6 @@ namespace Lab3
         {brick, lava, lava, defaults, defaults, grass, grass, grass, grass, brick, defaults, brick},
         {brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick}
         };
-
         public partial Environment GetEnvironments(int x, int y);
 
     }
