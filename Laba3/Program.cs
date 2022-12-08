@@ -45,6 +45,7 @@ namespace Lab3
                                     Console.WriteLine("Клетка стала дефолтной ");
                                 }
                             }
+                            else { Console.WriteLine("Снаряд прилетел в клетку, которую невозвожно разрушить. "); }
                         }
                     }
                     break;
@@ -70,6 +71,7 @@ namespace Lab3
                                     Console.WriteLine("Клетка стала дефолтной! ");
                                 }
                             }
+                            else { Console.WriteLine("Снаряд прилетел в клетку, которую невозвожно разрушить. "); }
                         }
                     }
                     break;
@@ -95,6 +97,7 @@ namespace Lab3
                                     Console.WriteLine("Клетка стала дефолтной! ");
                                 }
                             }
+                            else { Console.WriteLine("Снаряд прилетел в клетку, которую невозвожно разрушить. "); }
                         }
                     }
                     break;
@@ -120,6 +123,7 @@ namespace Lab3
                                     Console.WriteLine("Клетка стала дефолтной ");
                                 }
                             }
+                            else { Console.WriteLine("Снаряд прилетел в клетку, которую невозвожно разрушить. "); }
                         }
                     }
                     break;
@@ -265,7 +269,7 @@ namespace Lab3
     {
         public override partial void Change(Tank tank) // виртуальная функция для изменения клетки
         {
-            if (tank.Power > envhp)
+            if (tank.Power >= envhp)
             {
                 envhp = 0;
                 bulletPassability = true;
@@ -283,7 +287,7 @@ namespace Lab3
     {
         public override partial void Change(Tank tank) // виртуальная функция для изменения клетки
         {
-            if (tank.Power > envhp)
+            if (tank.Power >= envhp)
             {
                 envhp = 0;
                 bulletPassability = true;
@@ -400,7 +404,11 @@ namespace Lab3
                     }
                     return tank;
                 }
-                else { continue; }
+                else
+                {
+                    Console.WriteLine("Неправильный ввод.");
+                    continue; 
+                }
             }
 
         }
@@ -432,7 +440,11 @@ namespace Lab3
                     }
                     return tank2;
                 }
-                else { continue; }
+                else 
+                {
+                    Console.WriteLine("Неправильный ввод.");
+                    continue;
+                }
             }
         }
         static void Actions()
@@ -481,24 +493,38 @@ namespace Lab3
                     case 'm': tank2.Shoot(map, tank); break;
                     case 'q': // сериализация  
                         {
+                            try
+                            {
+                                map = MapSerialisation(map, tank.X, tank.Y, tank2.X, tank2.Y, false);
+                                tank = TankSerialisation(tank, false);
+                                tank2 = Tank2Serialisation(tank2, false);
+                                Console.WriteLine("Данные успешно сохранены!");
+                                Process.GetCurrentProcess().Kill();
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Данные не сохранены!");
+                            }
                             
-                            map = MapSerialisation(map,tank.X,tank.Y,tank2.X,tank2.Y, false);
-                            tank = TankSerialisation(tank, false);
-                            tank2 = Tank2Serialisation(tank2, false);
-                            Process.GetCurrentProcess().Kill();
                         }; 
                         break;
                     case 'z': // десериализация 
                         {
-                            tank = TankSerialisation(tank, true);
-                            tank2 = Tank2Serialisation(tank2, true);
-                            map = MapSerialisation(map, tank.X,tank.Y,tank2.X,tank2.Y, true);
-                            Console.WriteLine("Продолжение игры с предыдущего сохранения");
+                            try
+                            {
+                                tank = TankSerialisation(tank, true);
+                                tank2 = Tank2Serialisation(tank2, true);
+                                map = MapSerialisation(map, tank.X, tank.Y, tank2.X, tank2.Y, true);
+                                Console.WriteLine("Данные прошлой игры востановлены!");
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Данные прошлой игры не сохранены!");
+                            }
                         }
                         break;
-                    default: Console.WriteLine("Такой кнопок нет в управлении.");  break;
+                    default: Console.WriteLine("Неправильный ввод!");  break;
                 }
-
             }
             Console.WriteLine("GAME OVER!");
         }

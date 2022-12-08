@@ -177,7 +177,5 @@ namespace Lab3
         {brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick, brick}
         };
         public partial Environment GetEnvironments(int x, int y);
-
     }
-
 }
