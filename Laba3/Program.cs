@@ -531,6 +531,7 @@ namespace Lab3
         static void Main()
         {
             Actions();
+
         }
     }
 }

@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laba3", "Laba3\Laba3.csproj", "{ACAF42DE-DBA2-47AB-8442-F3D3FB355529}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laba3", "Laba3\Laba3.csproj", "{ACAF42DE-DBA2-47AB-8442-F3D3FB355529}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TankTests", "TankTests\TankTests.csproj", "{841C0751-9BCD-45AE-BEBE-082DB5A3BA82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TankTests", "TankTests\TankTests.csproj", "{841C0751-9BCD-45AE-BEBE-082DB5A3BA82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentTests", "EnvironmentTests\EnvironmentTests.csproj", "{8FB726DF-493B-43F4-BB5F-A4682310F115}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnvironmentTests", "EnvironmentTests\EnvironmentTests.csproj", "{8FB726DF-493B-43F4-BB5F-A4682310F115}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lab4WPF", "..\Lab4WPF\Lab4WPF\Lab4WPF.csproj", "{72DAE65C-4B4D-429E-8E1D-DCD1A1C880BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{8FB726DF-493B-43F4-BB5F-A4682310F115}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FB726DF-493B-43F4-BB5F-A4682310F115}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FB726DF-493B-43F4-BB5F-A4682310F115}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72DAE65C-4B4D-429E-8E1D-DCD1A1C880BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72DAE65C-4B4D-429E-8E1D-DCD1A1C880BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72DAE65C-4B4D-429E-8E1D-DCD1A1C880BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72DAE65C-4B4D-429E-8E1D-DCD1A1C880BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
