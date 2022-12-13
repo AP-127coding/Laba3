@@ -7,4 +7,16 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Brick.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Laba3\Laba3\Laba3.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Brick.jpg" />
+  </ItemGroup>
+
 </Project>
